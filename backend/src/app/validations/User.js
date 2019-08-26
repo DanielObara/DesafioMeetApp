@@ -11,7 +11,9 @@ const email = Yup.string().max(
 const password = Yup.string()
   .min(6, 'Senha deve ter no mínimo 6 caracteres.')
   .max(25, 'Senha deve ter no máximo 25 caracteres.');
+
 const oldPassword = password;
+
 const confirmPassword = password.when('password', (pass, field) =>
   pass
     ? field
@@ -22,8 +24,8 @@ const confirmPassword = password.when('password', (pass, field) =>
 
 export const storeSchema = Yup.object().shape({
   name: name.required('Nome é obrigatório.'),
-  email: email.required('Eimail é obrigatório.'),
-  password: password.required('Password is required')
+  email: email.required('E-mail é obrigatório.'),
+  password: password.required('A senha é obrigatória')
 });
 
 export const updateSchema = Yup.object().shape({
