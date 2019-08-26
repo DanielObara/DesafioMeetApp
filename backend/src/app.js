@@ -1,0 +1,25 @@
+/**
+ * Utilizar essa sintaxe mais atual de import/export é possível graças ao Sucrase.
+ * Porém pode ser feito de outras formas utilizando babel por ex.
+ * */
+import express from 'express';
+import routes from './routes';
+import './database';
+
+class App {
+  constructor() {
+    this.server = express();
+    this.middlewares();
+    this.routes();
+  }
+
+  middlewares() {
+    this.server.use(express.json());
+  }
+
+  routes() {
+    this.server.use(routes);
+  }
+}
+
+export default new App().server;
