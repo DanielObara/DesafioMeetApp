@@ -218,7 +218,7 @@ class MeetupController {
 
     await meetup.save();
 
-    return res.send();
+    return res.send({ msg: 'Meetup excluído com sucesso!' });
   }
 }
 
