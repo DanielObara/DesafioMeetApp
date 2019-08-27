@@ -24,6 +24,8 @@ class Database {
     // Percorrendo as models e passando a connection
     models
       .map(model => model.init(this.connection))
+      // Percorrendo os models novamente e só vai associar se o model.associate existir
+      // Pois no model file não existe o associate.
       .map(model => model.associate && model.associate(this.connection.models));
   }
 }

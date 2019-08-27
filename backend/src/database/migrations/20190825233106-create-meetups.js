@@ -37,6 +37,11 @@ module.exports = {
         onDelete: 'SET NULL',
         allowNull: true
       },
+      subscribers: {
+        type: Sequelize.ARRAY(Sequelize.INTEGER),
+        allowNull: false,
+        defaultValue: []
+      },
       canceled_at: {
         type: Sequelize.DATE,
         allowNull: true
