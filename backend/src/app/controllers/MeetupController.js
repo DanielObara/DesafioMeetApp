@@ -1,3 +1,4 @@
+import { Op } from 'sequelize';
 import { isBefore, parseISO } from 'date-fns';
 
 import Meetup from '../models/Meetup';
@@ -48,7 +49,58 @@ class MeetupController {
       ]
     });
 
-    if (!meetup) res.status(400).json({ error: 'O Meetup não existe!' });
+    if (!meetup) return res.status(400).json({ error: 'O Meetup não existe!' });
+
+    const {
+      title,
+      description,
+      location,
+      date,
+      owner,
+      past,
+      cancelable,
+      canceled_at,
+      banner
+    } = meetup;
+
+    const subscribersAmount = 5;
+
+    const subscribers = await User.findAll({
+      where: {
+        [Op.or]: meetup.subscribers
+          .slice(0, subscribersAmount)
+          .map(user_id => ({
+            id: user_id
+          }))
+      },
+      attributes: ['id', 'name'],
+      include: [
+        {
+          model: File,
+          as: 'avatar',
+          attributes: ['id', 'path', 'url']
+        }
+      ]
+    });
+
+    const subscribed = !!meetup.subscribers.find(
+      user_id => user_id === req.userId
+    );
+
+    return res.json({
+      title,
+      description,
+      location,
+      date,
+      owner,
+      past,
+      cancelable,
+      canceled_at,
+      banner,
+      subscribers,
+      restOfSubscribers: meetup.subscribers.length - subscribersAmount,
+      subscribed
+    });
   }
 
   async store(req, res) {
