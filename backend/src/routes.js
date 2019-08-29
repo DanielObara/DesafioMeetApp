@@ -11,6 +11,8 @@ import UserController from './app/controllers/UserController';
 import SessionController from './app/controllers/SessionController';
 import FileController from './app/controllers/FileController';
 import MeetupController from './app/controllers/MeetupController';
+import MeetupSignupController from './app/controllers/MeetupSignupController';
+import MeetupListingController from './app/controllers/MeetupListingController';
 
 import authMiddleware from './app/middlewares/auth';
 
@@ -33,5 +35,16 @@ routes.get('/meetups/:id', MeetupController.show);
 routes.post('/meetups', MeetupController.store);
 routes.put('/meetups/:id', MeetupController.update);
 routes.delete('/meetups/:id', MeetupController.delete);
+
+// Retorna todos os meetup inscritos
+routes.get('/subscriptions', MeetupSignupController.index);
+// Retorna todos os inscritos no meetup
+routes.get('/subscriptions/:id', MeetupSignupController.show);
+// Se inscreve no meetup
+routes.post('/subscriptions/:id', MeetupSignupController.store);
+// Cancela uma inscrição de um meetup
+routes.delete('/subscriptions/:id', MeetupSignupController.delete);
+
+routes.get('/myMeetups/:id', MeetupListingController.show);
 
 export default routes;

@@ -1,4 +1,5 @@
 import Sequelize from 'sequelize';
+import mongoose from 'mongoose';
 
 // Import dos models
 import User from '../app/models/User';
@@ -27,6 +28,13 @@ class Database {
       // Percorrendo os models novamente e só vai associar se o model.associate existir
       // Pois no model file não existe o associate.
       .map(model => model.associate && model.associate(this.connection.models));
+  }
+
+  mongo() {
+    this.mongoConnection = mongoose.connect(
+      'mongodb://localhost:27017/meetapp',
+      { useNewUrlParser: true, useFindAndModify: true }
+    );
   }
 }
 
