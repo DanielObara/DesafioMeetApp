@@ -106,7 +106,7 @@ class MeetupSignupController {
 
     // Retorna 400 caso meetup seja um cancelado
     if (meetup.canceled_at !== null)
-      res.statusd(400).json({ error: 'Meetup cancelado!' });
+      res.status(400).json({ error: 'Meetup cancelado!' });
 
     // Retorna 400 caso seja o criador do meetup
     if (req.userId === meetup.owner_id)
@@ -131,13 +131,14 @@ class MeetupSignupController {
       },
       attributes: ['id', 'title', 'location', 'date']
     });
-
+    // Retorna 400 caso o usuário já esteja inscrito em outro meetup
     if (conflictMeetups)
       return res.status(400).json({
         error: 'Você não pode se inscrever em dois meetups simutâneos',
         conflict: conflictMeetups
       });
 
+    // Inserindo o id do usuário ao array do meetup
     const {
       id,
       title,
@@ -156,8 +157,25 @@ class MeetupSignupController {
           as: 'avatar',
           attributes: ['id', 'path', 'url']
         }
-      ]
+      ],
+      attributes: ['id', 'name', 'email']
     });
+
+    // await Notification.create({
+    //   user: meetup.owner_id,
+    //   content: `${user.name} signed up for your Meetup ${title}!`,
+    //   picture: user.avatar ? user.avatar.url : 'adorable',
+    //   redirects: `/details/${id}`,
+    //   payload: {
+    //     adorable: user.name
+    //   }
+    // });
+
+    // await Notification.create({
+    //   user: user.id,
+    //   content: `You are now subscribed into ${title}!`,
+    //   redirects: `/details/${id}`
+    // });
 
     await Queue.add(SubscriptionMail.key, {
       meetup,

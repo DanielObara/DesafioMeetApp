@@ -1,19 +1,52 @@
+import { Op } from 'sequelize';
+import { startOfDay, endOfDay, parseISO } from 'date-fns';
 import Meetup from '../models/Meetup';
+import User from '../models/User';
+import File from '../models/File';
 
 class MeetupListingController {
-  async show(req, res) {
-    const { id } = req.params;
+  async index(req, res) {
+    const where = { canceled_at: null };
+    const page = req.query.page || 1;
 
-    const { subscribers } = await Meetup.findByPk(id, {
-      attributes: ['subscribers']
+    if (!req.query.date) {
+      return res.status(400).json({ error: 'Invalid date' });
+    }
+
+    const searchDate = parseISO(req.query.date);
+
+    where.date = {
+      [Op.between]: [startOfDay(searchDate), endOfDay(searchDate)]
+    };
+
+    const meetups = await Meetup.findAll({
+      where,
+      attributes: ['id', 'title', 'description', 'location', 'date'],
+      order: ['date'],
+      include: [
+        {
+          model: User,
+          as: 'owner',
+          attributes: ['id', 'name'],
+          include: [
+            {
+              model: File,
+              as: 'avatar',
+              attributes: ['id', 'path', 'url']
+            }
+          ]
+        },
+        {
+          model: File,
+          as: 'banner',
+          attributes: ['id', 'path', 'url']
+        }
+      ],
+      limit: 10,
+      offset: 10 * page - 10
     });
 
-    if (!subscribers)
-      return res.status(400).json({ error: 'Meetup does not exists' });
-
-    const subscribed = !!subscribers.find(user_id => user_id === req.userId);
-
-    return res.json(subscribed);
+    return res.json(meetups);
   }
 }
 

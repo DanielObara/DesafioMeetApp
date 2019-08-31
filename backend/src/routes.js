@@ -30,11 +30,19 @@ routes.put('/users', UserController.update);
 
 routes.post('/files', upload.single('file'), FileController.store);
 
-routes.get('/meetups', MeetupController.index);
-routes.get('/meetups/:id', MeetupController.show);
+// Cria um meetup
 routes.post('/meetups', MeetupController.store);
+// Lista os meetups que eu criei
+routes.get('/meetups', MeetupController.index);
+// Mostra um único meetup por ID para todos usuários
+routes.get('/meetups/:id', MeetupController.show);
+// Atualiza seu meetup
 routes.put('/meetups/:id', MeetupController.update);
+// Deleta seu meetup
 routes.delete('/meetups/:id', MeetupController.delete);
+
+// Lista todos os meetup ordenados por data e com paginação
+routes.get('/allmeetups/', MeetupListingController.index);
 
 // Retorna todos os meetup inscritos
 routes.get('/subscriptions', MeetupSignupController.index);
@@ -44,7 +52,5 @@ routes.get('/subscriptions/:id', MeetupSignupController.show);
 routes.post('/subscriptions/:id', MeetupSignupController.store);
 // Cancela uma inscrição de um meetup
 routes.delete('/subscriptions/:id', MeetupSignupController.delete);
-
-routes.get('/myMeetups/:id', MeetupListingController.show);
 
 export default routes;
