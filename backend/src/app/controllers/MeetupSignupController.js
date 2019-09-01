@@ -161,22 +161,6 @@ class MeetupSignupController {
       attributes: ['id', 'name', 'email']
     });
 
-    // await Notification.create({
-    //   user: meetup.owner_id,
-    //   content: `${user.name} signed up for your Meetup ${title}!`,
-    //   picture: user.avatar ? user.avatar.url : 'adorable',
-    //   redirects: `/details/${id}`,
-    //   payload: {
-    //     adorable: user.name
-    //   }
-    // });
-
-    // await Notification.create({
-    //   user: user.id,
-    //   content: `You are now subscribed into ${title}!`,
-    //   redirects: `/details/${id}`
-    // });
-
     await Queue.add(SubscriptionMail.key, {
       meetup,
       user

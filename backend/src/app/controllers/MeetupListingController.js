@@ -8,16 +8,21 @@ class MeetupListingController {
   async index(req, res) {
     const where = { canceled_at: null };
     const page = req.query.page || 1;
+    const { date } = req.query;
+    const { to: toDate } = req.query;
+    const parsedDate = date ? parseISO(date) : new Date(); // Default is today
 
-    if (!req.query.date) {
-      return res.status(400).json({ error: 'Invalid date' });
-    }
-
-    const searchDate = parseISO(req.query.date);
-
-    where.date = {
-      [Op.between]: [startOfDay(searchDate), endOfDay(searchDate)]
-    };
+    if (toDate === 'all')
+      where.date = {
+        [Op.gt]: parsedDate
+      };
+    else
+      where.date = {
+        [Op.between]: [
+          startOfDay(parsedDate),
+          endOfDay(toDate ? parseISO(toDate) : parsedDate)
+        ]
+      };
 
     const meetups = await Meetup.findAll({
       where,

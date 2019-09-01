@@ -1,4 +1,4 @@
-// Importando a Model do usuário.
+// Importando as Models
 import User from '../models/User';
 import File from '../models/File';
 
