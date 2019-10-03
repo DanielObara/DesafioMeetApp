@@ -10,7 +10,7 @@ class MeetupListingController {
     const page = req.query.page || 1;
     const { date } = req.query;
     const { to: toDate } = req.query;
-    const parsedDate = date ? parseISO(date) : new Date(); // Default is today
+    const parsedDate = date ? parseISO(date) : new Date();
 
     if (toDate === 'all')
       where.date = {
