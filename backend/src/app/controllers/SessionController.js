@@ -24,10 +24,10 @@ class SessionController {
       ]
     });
 
-    if (!user) res.status(401).json({ error: 'O E-mail não é registrado.' });
+    if (!user) res.status(401).json({ error: 'E-mail is not registered' });
 
     if (!(await user.checkPassword(password)))
-      res.status(401).json({ error: 'A senha não confere.' });
+      res.status(401).json({ error: 'The password does not match' });
 
     const { id, name, avatar } = user;
 

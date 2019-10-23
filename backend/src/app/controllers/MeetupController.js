@@ -10,7 +10,6 @@ class MeetupController {
   async index(req, res) {
     const meetups = await Meetup.findAll({
       where: { owner_id: req.userId },
-      // Inclui também na resposta o model de File renomeado por banner com determinado attrs.
       include: [
         {
           model: File,
@@ -48,7 +47,8 @@ class MeetupController {
       ]
     });
 
-    if (!meetup) return res.status(400).json({ error: 'O Meetup não existe!' });
+    if (!meetup)
+      return res.status(400).json({ error: 'Meetapp does not exists' });
 
     const {
       title,
@@ -111,21 +111,15 @@ class MeetupController {
 
     const { title, description, location, date, banner_id } = req.body;
 
-    /**
-     * Previne o uso de outros arquivos que não sejam imagem
-     */
     const image = await File.findByPk(banner_id);
-    if (!image) res.status(400).json({ error: 'Banner não encontrado!' });
+    if (!image) res.status(400).json({ error: 'Banner not found!' });
     if (image.type !== 'banner')
-      res.status(400).json({ error: 'A foto precisa ser do tipo banner' });
+      res.status(400).json({ error: 'Your picture must be a banner!' });
 
-    /**
-     * Check for past dates
-     */
     if (isBefore(parseISO(date), new Date()))
       return res
         .status(400)
-        .json({ error: 'Você não pode criar um Meetup em datas passadas!' });
+        .json({ error: 'You can not created an meetapp to a passed date!' });
 
     const meetup = await Meetup.create({
       title,
@@ -148,24 +142,26 @@ class MeetupController {
 
     const meetup = await Meetup.findOne({ where: { id: req.params.id } });
 
-    if (!meetup) res.status(400).json({ error: 'O Meetup não existe' });
+    if (!meetup) res.status(400).json({ error: 'Meetapp does not exists' });
 
-    if (meetup.past) res.status(400).json({ error: 'O Meetup já aconteceu' });
+    if (meetup.past) res.status(400).json({ error: 'Meetup has passed' });
 
     if (req.userId !== meetup.owner_id)
-      res.status(400).json({ error: 'Você não é o criador deste Meetup!' });
+      res
+        .status(400)
+        .json({ error: 'You are not the creator of this Meetup!' });
 
     const { date, banner_id } = req.body;
 
     if (banner_id && banner_id !== meetup.banner_id) {
       const image = await File.findByPk(banner_id);
-      if (!image) res.status(400).json({ error: 'Imagem não encontrada' });
+      if (!image) res.status(400).json({ error: 'Image not found' });
       if (image.type !== 'banner')
-        res.status(400).json({ error: 'Sua imagem precisa ser um banner' });
+        res.status(400).json({ error: 'Your image must be a banner.' });
     }
 
     if (date && isBefore(parseISO(date), new Date()))
-      res.status(400).json({ error: 'Datas passadas não é permitido' });
+      res.status(400).json({ error: 'Past dates not allowed' });
 
     await meetup.update(req.body);
 
@@ -200,16 +196,20 @@ class MeetupController {
   async delete(req, res) {
     const meetup = await Meetup.findOne({ where: { id: req.params.id } });
 
-    if (!meetup) res.status(400).json({ error: 'Este Meetup já existe!' });
+    if (!meetup) res.status(400).json({ error: 'This Meetup Already Exists!' });
 
     if (meetup.canceled_at)
-      res.status(400).json({ error: 'Este Meetup já foi cancelado!', meetup });
+      res
+        .status(400)
+        .json({ error: 'This Meetup has already been canceled.!', meetup });
 
     if (meetup.past)
-      res.status(400).json({ error: 'Você não pode deletar este meetup!' });
+      res.status(400).json({ error: 'You cannot delete this meetup!' });
 
     if (req.userId !== meetup.owner_id)
-      res.status(400).json({ error: 'Você não é o criador deste Meetup!' });
+      res
+        .status(400)
+        .json({ error: 'You are not the creator of this Meetup!' });
 
     meetup.canceled_at = new Date();
 
@@ -217,7 +217,7 @@ class MeetupController {
 
     await meetup.save();
 
-    return res.send({ msg: 'Meetup excluído com sucesso!' });
+    return res.send({ msg: 'Meetup was successfully deleted !' });
   }
 }
 

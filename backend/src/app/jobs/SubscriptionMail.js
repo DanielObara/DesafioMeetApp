@@ -3,17 +3,12 @@ import pt from 'date-fns/locale/pt';
 import Mail from '../../lib/Mail';
 
 class SubscriptionMail {
-  // Declarando a key desta forma possibilita que quando importado
-  // a classe seja possível acessar SubscriptionMail.key()
   get key() {
     return 'SubscriptionMail';
   }
 
-  // Handle que vai executar a tarefa de envio de email
   async handle({ data }) {
     const { meetup, user } = data;
-    console.log('Entrou na fila');
-
     await Mail.sendMail({
       to: `${meetup.owner.name} <${meetup.owner.email}>`,
       subject: `[${meetup.title}] Nova inscrição`,

@@ -2,30 +2,30 @@ import * as Yup from 'yup';
 
 const name = Yup.string().max(
   200,
-  'Nome possui limite máximo de 200 caracteres'
+  'Name has a maximum limit of 200 characters'
 );
 const email = Yup.string().max(
   100,
-  'E-mail possui limite máximo de 100 caracteres'
+  'E-mail has a maximum limit of 100 characters'
 );
 const password = Yup.string()
-  .min(6, 'Senha deve ter no mínimo 6 caracteres.')
-  .max(25, 'Senha deve ter no máximo 25 caracteres.');
+  .min(6, 'Password must be at least 6 characters.')
+  .max(25, 'Password must be a maximum limit of 25 characters.');
 
 const oldPassword = password;
 
 const confirmPassword = password.when('password', (pass, field) =>
   pass
     ? field
-        .required('Por favor confirme sua senha')
-        .oneOf([Yup.ref('password')], 'As senhas não são iguais.')
+        .required('Please confirm your password.')
+        .oneOf([Yup.ref('password')], 'Passwords is not the same.')
     : field
 );
 
 export const storeSchema = Yup.object().shape({
-  name: name.required('Nome é obrigatório.'),
-  email: email.required('E-mail é obrigatório.'),
-  password: password.required('A senha é obrigatória')
+  name: name.required('Name is required.'),
+  email: email.required('E-mail is required.'),
+  password: password.required('Password is required.')
 });
 
 export const updateSchema = Yup.object().shape({
@@ -33,7 +33,7 @@ export const updateSchema = Yup.object().shape({
   email,
   oldPassword,
   password: password.when('oldPassword', (oldPass, field) =>
-    oldPass ? field.required('A nova senha é obrigatória') : field
+    oldPass ? field.required('The new password is required') : field
   ),
   confirmPassword
 });

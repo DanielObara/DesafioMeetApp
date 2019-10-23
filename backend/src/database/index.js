@@ -17,16 +17,11 @@ class Database {
     this.init();
   }
 
-  // Responsável por fazer a conexão com o banco e carregar os models
   init() {
-    // Passando as configurações à connection
     this.connection = new Sequelize(databaseConfig);
 
-    // Percorrendo as models e passando a connection
     models
       .map(model => model.init(this.connection))
-      // Percorrendo os models novamente e só vai associar se o model.associate existir
-      // Pois no model file não existe o associate.
       .map(model => model.associate && model.associate(this.connection.models));
   }
 

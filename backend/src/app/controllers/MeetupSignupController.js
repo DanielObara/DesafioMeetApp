@@ -9,9 +9,7 @@ import SubscriptionMail from '../jobs/SubscriptionMail';
 import Queue from '../../lib/Queue';
 
 class MeetupSignupController {
-  // Listando os meetups que irão acontecer
   async index(req, res) {
-    // Buscando os meetups no qual o user logado está registrado e trazendo o criador do meetup e sua foto.
     const meetups = await Meetup.findAll({
       where: {
         subscribers: { [Op.contains]: [req.userId] }
@@ -44,15 +42,14 @@ class MeetupSignupController {
 
   async show(req, res) {
     const { id } = req.params;
-    // Busca inscritos no meetup
+
     const { subscribers } = await Meetup.findByPk(id, {
       attributes: ['subscribers']
     });
-    // Valida se não está vazio
-    if (!subscribers)
-      return res.status(400).json({ error: 'O Meetup não existe!' });
 
-    // Paginação
+    if (!subscribers)
+      return res.status(400).json({ error: 'Meetup does not exist!' });
+
     const perPage = 10;
     const { page = 1 } = req.query;
 
@@ -60,7 +57,6 @@ class MeetupSignupController {
     const [from, to] = [offset, offset + perPage];
     const hasNext = !!subscribers[to];
 
-    // Retorna da tabela do usuário todos os inscritos no meetup
     const allSubscribers = await User.findAll({
       where: {
         [Op.or]: subscribers.slice(from, to).map(user_id => ({
@@ -83,7 +79,6 @@ class MeetupSignupController {
   async store(req, res) {
     const meetup = await Meetup.findOne({
       where: { id: req.params.id },
-      // Incluindo informações dos relacionamento para retorno
       include: [
         {
           model: File,
@@ -98,25 +93,19 @@ class MeetupSignupController {
       ]
     });
 
-    // Retorna 400 caso não exista
-    if (!meetup) res.status(400).json({ error: 'Meetup não existe!' });
+    if (!meetup) res.status(400).json({ error: 'Meetup does not exist!' });
 
-    // Retorna 400 caso já ocorrido
-    if (meetup.past) res.status(400).json({ error: 'Meetup já aconteceu!' });
+    if (meetup.past)
+      res.status(400).json({ error: 'Meetup already happened!' });
 
-    // Retorna 400 caso meetup seja um cancelado
     if (meetup.canceled_at !== null)
-      res.status(400).json({ error: 'Meetup cancelado!' });
+      res.status(400).json({ error: 'Meetup was canceled!' });
 
-    // Retorna 400 caso seja o criador do meetup
     if (req.userId === meetup.owner_id)
-      res
-        .status(400)
-        .json({ error: 'Você não pode se inscrever no próprio Meetup' });
+      res.status(400).json({ error: 'You cannot sign up for Meetup itself' });
 
-    // Retorna 400 caso o usuário logado já esteja inscrito no meetup
     if (meetup.subscribers.includes(req.userId))
-      res.status(400).json({ error: 'Você já está inscrito' });
+      res.status(400).json({ error: 'You are already subscribed' });
 
     const hourStart = startOfHour(Number(meetup.date));
     const minimumMeetupHours = 2;
@@ -125,20 +114,17 @@ class MeetupSignupController {
       where: {
         subscribers: { [Op.contains]: [req.userId] },
         date: {
-          // Operação que retorna os com data ('between') entre os horários especificado
           [Op.between]: [hourStart, addHours(hourStart, minimumMeetupHours)]
         }
       },
       attributes: ['id', 'title', 'location', 'date']
     });
-    // Retorna 400 caso o usuário já esteja inscrito em outro meetup
     if (conflictMeetups)
       return res.status(400).json({
-        error: 'Você não pode se inscrever em dois meetups simutâneos',
+        error: 'You cannot sign up for two simultaneous meetups',
         conflict: conflictMeetups
       });
 
-    // Inserindo o id do usuário ao array do meetup
     const {
       id,
       title,
@@ -179,15 +165,15 @@ class MeetupSignupController {
   async delete(req, res) {
     const meetup = await Meetup.findOne({ where: { id: req.params.id } });
 
-    if (!meetup) res.status(400).json({ error: 'Este meetup não existe!' });
+    if (!meetup) res.status(400).json({ error: 'This meetup does not exist!' });
 
     if (meetup.past)
       res.status(400).json({
-        error: 'Você não pode cancelar a inscrição de um Meetup passado!'
+        error: 'You cannot unsubscribe from a past Meetup!'
       });
 
     if (!meetup.subscribers.includes(req.userId))
-      res.status(400).json({ error: 'Você não está inscrito!' });
+      res.status(400).json({ error: 'You are not subscribed!' });
 
     const removeFromSubs = subs => {
       subs.splice(subs.indexOf(req.userId), 1);
@@ -197,7 +183,7 @@ class MeetupSignupController {
 
     await meetup.update({ subscribers });
 
-    return res.send({ msg: 'Inscrição cancelada com sucesso!' });
+    return res.send({ msg: 'Subscription successfully canceled!' });
   }
 }
 

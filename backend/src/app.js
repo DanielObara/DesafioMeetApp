@@ -1,8 +1,3 @@
-/**
- * Utilizar essa sintaxe mais atual de import/export é possível graças ao Sucrase.
- * Porém pode ser feito de outras formas utilizando babel por ex.
- * */
-
 import './bootstrap';
 import express from 'express';
 import cors from 'cors';

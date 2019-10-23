@@ -13,7 +13,6 @@ module.exports = {
   storage: './__tests__/database.sqlite',
   define: {
     timestamps: true,
-    // Padroniza a nomenclatura das tabelas ex: user_groups
     underscored: true,
     underscoredAll: true
   }

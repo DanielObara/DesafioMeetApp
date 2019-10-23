@@ -15,7 +15,6 @@ class User extends Model {
       }
     );
 
-    // Antes do usuário ser criado esta função é executada antes de qualquer criação/edição
     this.addHook('beforeSave', async user => {
       if (user.password)
         user.password_hash = await bcrypt.hash(user.password, 8);
@@ -23,7 +22,6 @@ class User extends Model {
     return this;
   }
 
-  // Define o relacionamento entre os Files e User
   static associate(models) {
     this.belongsTo(models.File, { foreignKey: 'avatar_id', as: 'avatar' });
   }
