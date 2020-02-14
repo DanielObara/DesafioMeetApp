@@ -4,11 +4,7 @@ import { format, subMonths, addMonths, parseISO } from 'date-fns';
 import en from 'date-fns/locale/en-US';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { errorMessage, successMessage } from '~/util/Message';
-
-
 import api from '~/services/api';
-
-
 import {
   Container,
   ContainerHeader,
@@ -18,15 +14,12 @@ import {
   NoMeetapps,
   NoMeetappsText,
 } from './styles';
-
-
 import Background from '~/components/Background';
 import Header from '~/components/Header';
 import Meetapp from '~/components/Meetapp';
-import Loading from '~/components/Loading';
+
 
 export default function Dashboard() {
-
   const [meetapps, setMeetapps] = useState([]);
   const [date, setDate] = useState(new Date());
   const [refreshing] = useState(false);
@@ -39,7 +32,7 @@ export default function Dashboard() {
   useEffect(() => {
     async function loadMeetapps() {
       try {
-        const response = await api.get('meetapps', { params: { date } });
+        const response = await api.get('allmeetups', { params: { date } });
         const data = response.data.map(m => ({
           ...m,
           formattedDate: format(parseISO(m.date), "MMMM d', at' hh'h'mm", {

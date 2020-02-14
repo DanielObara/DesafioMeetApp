@@ -1,14 +1,11 @@
-/* MODULES */
 import React, { useState, useEffect, useMemo } from 'react';
 import { format, subMonths, addMonths, parseISO } from 'date-fns';
 import en from 'date-fns/locale/en-US';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { errorMessage, successMessage } from '~/util/Message';
 
-/* SERVICES */
 import api from '~/services/api';
 
-/* STYLES */
 import {
   Container,
   ContainerHeader,
@@ -19,13 +16,11 @@ import {
   NoMeetappsText,
 } from './styles';
 
-/* COMPONENTS */
 import Background from '~/components/Background';
 import Header from '~/components/Header';
 import Meetapp from '~/components/Meetapp';
 
 export default function Subscriptions() {
-  /* STATES */
   const [meetapps, setMeetapps] = useState([]);
   const [date, setDate] = useState(new Date());
   const [refreshing] = useState(false);
@@ -35,6 +30,7 @@ export default function Subscriptions() {
     () => format(date, 'yyyy MMMM', { locale: en }),
     [date]
   );
+  
   useEffect(() => {
     async function loadMeetapps() {
       try {
@@ -54,7 +50,6 @@ export default function Subscriptions() {
     loadMeetapps();
   }, [date]);
 
-  /* FUNCTIONS  */
   function handlePrevDay() {
     setDate(subMonths(date, 1));
   }
@@ -65,6 +60,7 @@ export default function Subscriptions() {
   function handleRefresh() {
     setDate(subMonths(date, 0));
   }
+  
   async function handleSubscribe(id) {
     try {
       await api.post(`subscriptions/${id}`);

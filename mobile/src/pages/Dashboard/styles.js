@@ -12,8 +12,6 @@ export const List = styled.FlatList.attrs({
   },
 })``;
 
-// export const ButtonDate = styled.Button``;
-
 export const ContainerHeader = styled.View`
   display: flex;
   flex-direction: row;

@@ -4,8 +4,8 @@ import reactotronSaga from 'reactotron-redux-saga';
 import { NativeModules } from 'react-native';
 
 if (__DEV__) {
-  const host = NativeModules.SourceCode.scriptURL.split('://')[1].split(':')[0]; // for work in device
-  const tron = Reactotron.configure({ host })
+  // const host = NativeModules.SourceCode.scriptURL.split('://')[1].split(':')[0]; // for work in device
+  const tron = Reactotron.configure({ host: '192.168.0.109' })
     .useReactNative()
     .use(reactotronRedux())
     .use(reactotronSaga())

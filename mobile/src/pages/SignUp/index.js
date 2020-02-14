@@ -1,16 +1,9 @@
-/* MODULES */
 import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Image } from 'react-native';
-
-/* COMPONENTS */
 import logo from '~/assets/logo.png';
 import Background from '~/components/Background';
-
-/* REDUX */
 import { signUpRequest } from '~/store/modules/auth/actions';
-
-/* STYLES */
 import {
   Container,
   Form,
@@ -22,18 +15,14 @@ import {
 
 export default function SignUp({ navigation }) {
   const dispatch = useDispatch();
-
   const emailRef = useRef();
   const passwordRef = useRef();
-
-  /* STATES */
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const loading = useSelector(state => state.auth.loading);
 
-  /* FUNCTIONS */
   function handleSubmit() {
     dispatch(signUpRequest(name, email, password));
   }
